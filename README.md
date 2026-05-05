@@ -35,8 +35,8 @@ A GPU rated at 989 TFLOPS running at 35% MFU delivers 346 effective TFLOPS.
 
 ## Why this matters for governance
 
-Frontier training runs at LLaMA 3 405B scale cost roughly $15-30M at current spot prices.
-GPT-4-class runs are estimated higher still. Fewer than a dozen organisations globally can sustain
+Frontier training runs at LLaMA 3 405B scale cost roughly $80-180M at current spot prices.
+GPT-4-class estimates are actively debated, but widely agreed to exceed $50M. Fewer than a dozen organisations globally can sustain
 this spending. Compute cost is not just an engineering constraint -- it is the natural chokepoint
 that makes hardware-level AI governance tractable.
 
@@ -80,8 +80,8 @@ from hardware import GPU_BY_NAME, evaluate, fmt_cost, fmt_hours
 gpu = GPU_BY_NAME["H100 SXM5 80GB"]
 result = evaluate(flops=3.15e23, gpu=gpu, mfu=0.35, num_gpus=1024)
 
-print(fmt_hours(result.wall_hours))   # e.g. "2.1 hrs"
-print(fmt_cost(result.cost_usd))      # e.g. "$247"
+print(fmt_hours(result.wall_hours))   # e.g. "10.3 days"
+print(fmt_cost(result.cost_usd))      # e.g. "$707.8K"
 ```
 
 ---
@@ -98,7 +98,7 @@ Pricing is approximate spot/reserved market rate, USD/hr, mid-2025.
 | H100 PCIe 80GB   | 756         | 80 GB | $2.20    |
 | A100 SXM4 80GB   | 312         | 80 GB | $1.90    |
 | A100 PCIe 80GB   | 312         | 80 GB | $1.60    |
-| L40S 48GB        | 733         | 48 GB | $1.40    |
+| L40S 48GB        | 362         | 48 GB | $1.40    |
 
 ---
 

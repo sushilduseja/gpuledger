@@ -66,7 +66,7 @@ GPU_CATALOG: list[GPU] = [
     ),
     GPU(
         name="L40S 48GB",
-        bf16_tflops=733.0,
+        bf16_tflops=362.05,
         vram_gb=48,
         spot_usd_hr=1.40,
         generation="Ada",
@@ -100,12 +100,18 @@ def gpu_hours(flops: float, gpu: GPU, mfu: float = DEFAULT_MFU) -> float:
     bf16_tflops is in TFLOPS = 10^12 FLOPS/sec.
     MFU (Model FLOPs Utilization) is the fraction of peak throughput actually achieved.
     """
+    if flops <= 0:
+        raise ValueError("flops must be positive")
+    if not 0 < mfu <= 1:
+        raise ValueError("mfu must be in range (0, 1]")
     effective_flops_per_sec = gpu.bf16_tflops * 1e12 * mfu
     return flops / effective_flops_per_sec / 3600.0
 
 
 def wall_clock_hours(total_gpu_hours: float, num_gpus: int) -> float:
-    return total_gpu_hours / max(num_gpus, 1)
+    if num_gpus < 1:
+        raise ValueError("num_gpus must be at least 1")
+    return total_gpu_hours / num_gpus
 
 
 def total_cost_usd(total_gpu_hours: float, gpu: GPU) -> float:
@@ -137,6 +143,12 @@ def evaluate(
     mfu: float = DEFAULT_MFU,
     num_gpus: int = 1,
 ) -> RunResult:
+    if flops <= 0:
+        raise ValueError("flops must be positive")
+    if not 0 < mfu <= 1:
+        raise ValueError("mfu must be in range (0, 1]")
+    if num_gpus < 1:
+        raise ValueError("num_gpus must be at least 1")
     gh = gpu_hours(flops, gpu, mfu)
     wh = wall_clock_hours(gh, num_gpus)
     cost = total_cost_usd(gh, gpu)
@@ -154,6 +166,8 @@ def evaluate(
 # -- Formatting helpers --------------------------------------------------------
 
 def fmt_flops(f: float) -> str:
+    if f <= 0:
+        raise ValueError("flops must be positive")
     exp = int(math.floor(math.log10(f)))
     coeff = f / (10 ** exp)
     return f"{coeff:.2f} x 10^{exp}"
